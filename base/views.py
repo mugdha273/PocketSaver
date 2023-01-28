@@ -40,7 +40,9 @@ class AddExpenseView(viewsets.ModelViewSet):
         
         category = data['category']
         data['user'] = request.user.id
-        data['expense_added'] = date.today()
+        
+        if "expense_added" not in data:
+            data['expense_added'] = date.today()
         serializer = self.get_serializer(data=data)
         
         if serializer.is_valid():
