@@ -14,7 +14,7 @@ class AddExpenseModel(models.Model):
     name = models.CharField(max_length=100, null=False, blank=False)
     category = models.CharField(max_length=100, choices=CATEGORIES, default='extra')
     price = models.IntegerField()
-    expense_added = models.DateTimeField()
+    expense_added = models.DateField()
     
 class CategoryLookup(models.Model):
     CATEGORIES = (

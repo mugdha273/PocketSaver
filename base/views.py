@@ -2,7 +2,7 @@ from rest_framework import generics, permissions, mixins, viewsets,status, views
 from rest_framework.response import Response
 from .serializers import RegisterSerializer, UserSerializer, AddExpenseModelSerializer, CategoryLookupSerializer
 from .models import AddExpenseModel, CategoryLookup
-from datetime import datetime
+from datetime import date
 from .utils import makeJson
 import requests
 
@@ -40,7 +40,7 @@ class AddExpenseView(viewsets.ModelViewSet):
         
         category = data['category']
         data['user'] = request.user.id
-        data['expense_added'] = datetime.now()
+        data['expense_added'] = date.today()
         serializer = self.get_serializer(data=data)
         
         if serializer.is_valid():
@@ -60,8 +60,7 @@ class VoiceExpenseView(views.APIView):
     def post(self, request):
         data = request.data
         output_json = makeJson(data['text'])
-        print(output_json)
-        addexpense_data = requests.post(url = 'http://127.0.0.1:8000/users/addexpense/',
+        addexpense_data = requests.post(url = 'https://pocket-saver.onrender.com/users/addexpense/',
                                   headers={'Authorization': 'Bearer ' + request.headers.get('Authorization').split()[1],'Content-Type': 'application/json'},
                                   json = output_json).json()
 
