@@ -29,7 +29,7 @@ class AddExpenseView(viewsets.ModelViewSet):
         if "category" not in data:
             data['category'] = None
             
-        if data['category'] is not None and not CategoryLookup.objects.filter(name=data['name'].tolower()).exists():
+        if data['category'] is not None and not CategoryLookup.objects.filter(name=data['name']).exists():
             CategoryLookup.objects.create(category=data['category'], name=data['name'])
             
         if data['category'] is None and CategoryLookup.objects.filter(name=data['name']).exists():
