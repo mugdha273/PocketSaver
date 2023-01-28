@@ -2,10 +2,19 @@ import spacy
 import nltk
 from nltk.tokenize import word_tokenize
 
+CATEGORIES = ['food', 'travel', 'bills', 'clothes', 'groceries', 'extra']
+
 def makeJson(text):
     output = {}
     # Load the spaCy model
     nlp = spacy.load("en_core_web_sm")
+    
+    category = None
+    
+    for word in text.split():
+        if word in CATEGORIES:
+            category = word
+            break
 
     # Process the text
     doc = nlp(text)
@@ -35,5 +44,8 @@ def makeJson(text):
 
     output["name"] = name
     output["price"] = price
+    
+    if category is not None:
+        output["category"] = category
 
     return output
