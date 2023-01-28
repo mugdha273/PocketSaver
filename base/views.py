@@ -29,12 +29,15 @@ class AddExpenseView(viewsets.ModelViewSet):
         if "category" not in data:
             data['category'] = None
             
-        if data['category'] is not None and not CategoryLookup.objects.filter(name=data['name']).exists():
+        if data['category'] is not None and not CategoryLookup.objects.filter(name=data['name'].tolower()).exists():
             CategoryLookup.objects.create(category=data['category'], name=data['name'])
             
         if data['category'] is None and CategoryLookup.objects.filter(name=data['name']).exists():
             data['category'] = CategoryLookup.objects.get(name=data['name']).category
-            
+        
+        if data['category'] is None:
+            data['category'] = 'extra'
+        
         category = data['category']
         data['user'] = request.user.id
         data['expense_added'] = datetime.now()
@@ -57,6 +60,7 @@ class VoiceExpenseView(views.APIView):
     def post(self, request):
         data = request.data
         output_json = makeJson(data['text'])
+        print(output_json)
         addexpense_data = requests.post(url = 'http://127.0.0.1:8000/users/addexpense/',
                                   headers={'Authorization': 'Bearer ' + request.headers.get('Authorization').split()[1],'Content-Type': 'application/json'},
                                   json = output_json).json()
