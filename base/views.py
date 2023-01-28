@@ -3,6 +3,8 @@ from rest_framework.response import Response
 from .serializers import RegisterSerializer, UserSerializer, AddExpenseModelSerializer, CategoryLookupSerializer
 from .models import AddExpenseModel, CategoryLookup
 from datetime import datetime
+from .utils import makeJson
+import requests
 
 #Register API
 class RegisterApi(generics.GenericAPIView):
@@ -21,7 +23,7 @@ class AddExpenseView(viewsets.ModelViewSet):
     serializer_class = AddExpenseModelSerializer
     permission_classes = [permissions.IsAuthenticated]
     
-    def create(self, request):
+    def create(self, request, *args, **kwargs):
         data = request.data
 
         if "category" not in data:
@@ -48,10 +50,15 @@ class CategoryLookupView(viewsets.ModelViewSet):
     serializer_class = CategoryLookupSerializer
     permission_classes = [permissions.IsAuthenticated]
     
+    
 class VoiceExpenseView(views.APIView):
     permission_classes = [permissions.IsAuthenticated]
     
     def post(self, request):
         data = request.data
+        output_json = makeJson(data['text'])
+        addexpense_data = requests.post(url = 'http://127.0.0.1:8000/users/addexpense/',
+                                  headers={'Authorization': 'Bearer ' + request.headers.get('Authorization').split()[1],'Content-Type': 'application/json'},
+                                  json = output_json).json()
 
-        return Response("Expense recorded", status= status.HTTP_400_BAD_REQUEST)
+        return Response(addexpense_data, status= status.HTTP_201_CREATED)
