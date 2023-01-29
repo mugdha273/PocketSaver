@@ -1,7 +1,7 @@
 from rest_framework import generics, permissions, mixins, viewsets,status, views
 from rest_framework.response import Response
 from .serializers import RegisterSerializer, UserSerializer, AddExpenseModelSerializer, CategoryLookupSerializer
-from .models import AddExpenseModel, CategoryLookup
+from .models import AddExpenseModel, CategoryLookup, User
 from datetime import date
 from .utils import makeJson
 import requests
@@ -16,6 +16,14 @@ class RegisterApi(generics.GenericAPIView):
         return Response({
             "user": UserSerializer(user,    context=self.get_serializer_context()).data,
             "message": "User Created Successfully.  Now perform Login to get your token",
+        })
+        
+class UserDetails(views.APIView):
+    def get(self,request):
+        user_details = User.objects.get(id=request.user.id)
+        
+        return Response({
+            "user": UserSerializer(user_details).data,
         })
         
 class AddExpenseView(viewsets.ModelViewSet):
@@ -49,6 +57,11 @@ class AddExpenseView(viewsets.ModelViewSet):
             serializer.save()
             return Response(serializer.data, status= status.HTTP_201_CREATED)
         return Response(serializer.errors, status= status.HTTP_400_BAD_REQUEST)
+    
+    def list(self,request):
+        expenses = AddExpenseModel.objects.filter(user=request.user.id)
+        
+        return Response(AddExpenseModelSerializer(expenses, many=True).data)
     
 class CategoryLookupView(viewsets.ModelViewSet):
     queryset = CategoryLookup.objects.all()
