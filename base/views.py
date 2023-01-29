@@ -80,3 +80,36 @@ class VoiceExpenseView(views.APIView):
                                   json = output_json).json()
 
         return Response(addexpense_data, status= status.HTTP_201_CREATED)
+    
+import json  
+from collections import defaultdict
+  
+class PredictExpense(views.APIView):
+    
+    def get(self, request):
+        # df = pd.read_csv('finaldata2.csv')
+        # return Response(future_expense(df,7), status= status.HTTP_200_OK)
+        db = AddExpenseModel.objects.filter(user=request.user)
+        expenses = AddExpenseModelSerializer(db, many=True).data
+        
+        expenses_by_date = defaultdict(int)
+
+        # Iterate through the expenses and add the amounts to the corresponding date
+        for expense in expenses:
+            expenses_by_date[expense["expense_added"]] += expense["price"]
+        # Create a list to store the JSON objects
+        expenses_json = []
+
+        # Iterate through the expenses_by_date dictionary and create JSON objects
+        for date, total in expenses_by_date.items():
+            expense_json = {"expense_added": date, "price": total}
+            expenses_json.append(expense_json)
+
+        # Serialize the list of JSON objects to a JSON string
+
+        json_string = json.dumps(expenses_json, indent=4)
+                        
+        df = pd.read_csv('finaldata2.csv')
+        future_expense(df,7)
+
+        return Response(future_expense(df,7), status= status.HTTP_200_OK)
