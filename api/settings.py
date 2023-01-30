@@ -48,7 +48,11 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "base",
+    "corsheaders",
+    
 ]
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000', 'https://pocket-saver.onrender.com']
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -61,7 +65,6 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
 ROOT_URLCONF = "api.urls"
 
 TEMPLATES = [
@@ -96,6 +99,7 @@ WSGI_APPLICATION = "api.wsgi.application"
 DATABASES = {
     'default': dj_database_url.parse(os.environ.get('DATABASE_URL'), conn_max_age=600),
 }
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [

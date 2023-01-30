@@ -11,6 +11,8 @@ urlpatterns = [
     path('register/', RegisterApi.as_view()),
     path('login/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('voice-expense/', VoiceExpenseView.as_view()),
+    path('user-details/', UserDetails.as_view()),
+    path('predict-expense/', PredictExpense.as_view()),
     path('', include(router.urls))
 ]
 
